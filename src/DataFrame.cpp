@@ -104,16 +104,18 @@ std::vector<std::string> DataFrame::operator[](const std::string &col_name) cons
     return result;
 }
 
+/////////// .loc operations
+// loc for 1 cell
 const std::string &DataFrame::loc(size_t row, size_t col) const {
-    if (row > data_.size() || col >= columns_.size()) throw std::out_of_range("index out of range");
+    if (row >= data_.size() || col >= columns_.size()) throw std::out_of_range("index out of range");
     return data_[row][col];
 }
-// .loc operations
+// row, col slices
 DataFrame DataFrame::loc(const Slice &row_slice, const Slice &col_slice) const {
     size_t row_start = row_slice.start_;
     size_t row_end = std::min(row_slice.end_, data_.size());
     size_t col_start = col_slice.start_;
-    size_t col_end = std::min(col_slice.start_, columns_.size());
+    size_t col_end = std::min(col_slice.end_, columns_.size());
 
     if (row_start > row_end || col_start > col_end) throw std::out_of_range("invalid indexing");
 
@@ -130,8 +132,8 @@ DataFrame DataFrame::loc(const Slice &row_slice, const Slice &col_slice) const {
     }
     return result;
 }
-// matrix loc
-std::vector<std::string> DataFrame::loc(size_t row, Slice &col_slice) const {
+// loc column slice
+std::vector<std::string> DataFrame::loc(size_t row, const Slice &col_slice) const {
     if (row >= data_.size()) throw std::out_of_range("row index out of range");
 
     size_t col_start = col_slice.start_;
@@ -144,12 +146,12 @@ std::vector<std::string> DataFrame::loc(size_t row, Slice &col_slice) const {
     return result;
 }
 
-// vector loc
-std::vector<std::string> DataFrame::loc(Slice &row_slice, size_t col) const {
+// loc row slice
+std::vector<std::string> DataFrame::loc(const Slice &row_slice, size_t col) const {
     if (col >= columns_.size()) throw std::out_of_range("col index out of range");
 
     size_t row_start = row_slice.start_;
-    size_t row_end = std::min(row_slice.end_, columns_.size());
+    size_t row_end = std::min(row_slice.end_, data_.size());
     if (row_start > row_end) throw std::out_of_range("invalid indexing");
 
     std::vector<std::string> result;
@@ -157,8 +159,32 @@ std::vector<std::string> DataFrame::loc(Slice &row_slice, size_t col) const {
     for (size_t r = row_start; r < row_end; ++r) result.push_back(data_[r][col]);
     return result;
 }
+/////// loc overloads
+// helper function to get column index
+size_t DataFrame::column_index(const std::string& col_name) const {
+    auto it = std::find(columns_.begin(), columns_.end(), col_name);
+    if (it == columns_.end()) throw std::out_of_range("column not found: " + col_name);
+    return it - columns_.begin();
+}
 
+const std::string &DataFrame::loc(size_t row, const std::string &col_name) const {
+    return loc(row, column_index(col_name));
+}
 
+std::vector<std::string> DataFrame::loc(const Slice &row_slice, const std::string &col_name) const {
+    return loc(row_slice, column_index(col_name));
+}
+
+DataFrame DataFrame::loc(const Slice &row_slice, const std::vector<std::string> &col_names) const {
+    std::vector<size_t> cols;
+    cols.reserve(col_names.size());
+    for (const auto &name : col_names) cols.push_back(column_index((name)));
+
+    Slice col_slice(cols.front(), cols.back() + 1);
+    return loc(row_slice, col_slice);
+}
+
+/////// conversion operations
 bool DataFrame::is_numeric_string(const std::string &s) {
     try {
         std::size_t pos;

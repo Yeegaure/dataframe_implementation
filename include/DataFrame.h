@@ -31,6 +31,8 @@ private:
     std::vector<std::string> columns_;
     std::vector<std::vector<std::string>> data_;
 
+    size_t column_index(const std::string& col_name) const;
+
     static bool is_numeric_string(const std::string &s);
     static bool is_int_string(const std::string &s);
 
@@ -62,8 +64,12 @@ public:
     // loc()
     const std::string &loc(size_t row, size_t col) const;
     DataFrame loc(const Slice &row_slice, const Slice &col_slice) const;
-    std::vector<std::string> loc(size_t row, Slice &col_slice) const;
-    std::vector<std::string> loc(Slice &row_slice, size_t col) const;
+    std::vector<std::string> loc(size_t row, const Slice &col_slice) const;
+    std::vector<std::string> loc(const Slice &row_slice, size_t col) const;
+    // loc() name-based overloads
+    const std::string& loc(size_t row, const std::string &col_name) const;
+    DataFrame loc(const Slice &row_slice, const std::vector<std::string> &col_names) const;
+    std::vector<std::string> loc(const Slice &row_slice, const std::string &col_name) const;
 
     // conversion vector: string -> int/double
     static std::vector<int> to_int_vector(const std::vector<std::string> &v);
