@@ -37,12 +37,6 @@ private:
     static bool is_numeric_vector(const std::vector<std::string> &v);
     static bool is_int_vector(const std::vector<std::string> &v);
 
-    static std::vector<int> to_int_vector(const std::vector<std::string> &v);
-    static std::vector<double> to_double_vector(const std::vector<std::string> &v);
-
-
-
-
 public:
     DataFrame() = default;
     explicit DataFrame(const std::vector<std::string> &cols);
@@ -70,6 +64,10 @@ public:
     DataFrame loc(const Slice &row_slice, const Slice &col_slice) const;
     std::vector<std::string> loc(size_t row, Slice &col_slice) const;
     std::vector<std::string> loc(Slice &row_slice, size_t col) const;
+
+    // conversion vector: string -> int/double
+    static std::vector<int> to_int_vector(const std::vector<std::string> &v);
+    static std::vector<double> to_double_vector(const std::vector<std::string> &v);
 
     Shape shape() const;
 };
