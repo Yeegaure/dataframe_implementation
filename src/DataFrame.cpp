@@ -7,6 +7,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <algorithm>
+#include <ostream>
 
 DataFrame::DataFrame(const std::vector<std::string> &cols) : columns_(cols) {}
 // columns
@@ -205,6 +206,11 @@ std::vector<double> DataFrame::to_double_vector(const std::vector<std::string> &
     }
     return result;
 }
+
+Shape DataFrame::shape() const {
+    return { data_.size(), columns_.size()};
+}
+
 
 
 

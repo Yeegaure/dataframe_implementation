@@ -7,12 +7,24 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <ostream>
 
 struct Slice {
     size_t start_, end_; // exclusive like in python
     Slice(size_t start, size_t end) : start_(start), end_(end) {}
     static Slice all() { return Slice(0, SIZE_MAX); }
 };
+
+// shape return
+struct Shape {
+    size_t rows_;
+    size_t columns_;
+};
+
+inline std::ostream &operator<<(std::ostream &os, const Shape &shape) {
+    os << "shape: (" << shape.rows_ << " x " << shape.columns_ << ')' << "\n";
+    return os;
+}
 
 class DataFrame {
 private:
@@ -58,6 +70,8 @@ public:
     DataFrame loc(const Slice &row_slice, const Slice &col_slice) const;
     std::vector<std::string> loc(size_t row, Slice &col_slice) const;
     std::vector<std::string> loc(Slice &row_slice, size_t col) const;
+
+    Shape shape() const;
 };
 
 #endif //DATAFRAME_H
