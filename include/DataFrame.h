@@ -10,9 +10,9 @@
 #include <ostream>
 
 struct Slice {
-    size_t start_, end_; // exclusive like in python
-    Slice(size_t start, size_t end) : start_(start), end_(end) {}
-    static Slice all() { return Slice(0, SIZE_MAX); }
+    size_t start_, end_; // exclusive ~ in python
+    constexpr Slice(size_t start, size_t end) : start_(start), end_(end) {}
+    static constexpr Slice all() { return Slice(0, SIZE_MAX); }
 };
 
 // shape return
