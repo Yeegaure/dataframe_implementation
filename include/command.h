@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 #include <variant>
+#include <unordered_map>
 
 #include <DataFrame.h>
 #include <CSVLoader.h>
@@ -40,6 +41,10 @@ public: void execute(DataFrame &df, const CommandArgs &args) override;
 
 class PlotCommand : public InterfaceCommand {
 public: void execute(DataFrame &df, const CommandArgs &args) override;
+};
+
+class StatsCommand : public InterfaceCommand {
+public: void execute(DataFrame& df, const CommandArgs& args) override;
 };
 
 class HelpCommand : public InterfaceCommand {
