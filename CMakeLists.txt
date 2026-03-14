@@ -39,27 +39,29 @@ add_executable(project main.cpp)
 target_link_libraries(project PRIVATE project_lib)
 target_include_directories(project PRIVATE ${Python3_INCLUDE_DIRS})
 
-# GoogleTest
-include(FetchContent)
-FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/refs/heads/main.zip
-)
-FetchContent_MakeAvailable(googletest)
+option(ENABLE_TESTS "Build Google Tests" OFF)
 
-enable_testing()
+if(ENABLE_TESTS)
+    include(FetchContent)
+    FetchContent_Declare(
+            googletest
+            URL https://github.com/google/googletest/archive/refs/heads/main.zip
+    )
+    FetchContent_MakeAvailable(googletest)
 
-# test executable
-add_executable(core_tests
-        tests/test_dataframe.cpp
-        tests/test_commands.cpp
-)
+    enable_testing()
 
-target_link_libraries(core_tests
-        PRIVATE
-        gtest
-        gtest_main
-        project_lib
-)
+    add_executable(core_tests
+            tests/test_dataframe.cpp
+            tests/test_commands.cpp
+    )
 
-add_test(NAME core_tests COMMAND core_tests)
+    target_link_libraries(core_tests
+            PRIVATE
+            gtest
+            gtest_main
+            project_lib
+    )
+
+    add_test(NAME core_tests COMMAND core_tests)
+endif()
